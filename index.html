@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>爱心炸裂</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background: #ffffff;
+        }
+        .item {
+            position: absolute;
+            width: 90px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: "Microsoft YaHei";
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 6px;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+
+<script>
+const texts = ["好好吃饭","好好爱自己","多喝热水","照顾好自己","我想你了","天天开心","保持好心情","多赚一点","别熬夜","注意保暖"];
+const colors = ["#FF6B6B","#FFD1DC","#D946EF","#6366F1","#4ADE80","#FACC15","#F97316","#8B5CF6","#EC4899","#10B981"];
+
+// 爱心坐标（已缩小：scale = 22）
+function heartPoints() {
+    let pts = [];
+    let cx = window.innerWidth / 2;
+    let cy = window.innerHeight / 2 - 140;
+    let scale = 22;
+    for (let t=0; t<360; t++) {
+        let th = 2 * Math.PI * t / 360;
+        let x = 16 * Math.sin(th)**3;
+        let y = 13*Math.cos(th) -5*Math.cos(2*th) -2*Math.cos(3*th) -Math.cos(4*th);
+        pts.push({x: cx + x*scale, y: cy - y*scale});
+    }
+    return pts;
+}
+
+function make(x,y,text,color) {
+    let d = document.createElement("div");
+    d.className = "item";
+    d.style.left = x + "px";
+    d.style.top = y + "px";
+    d.style.background = color;
+    d.innerText = text;
+    document.body.appendChild(d);
+    return d;
+}
+
+async function run() {
+    let hp = heartPoints();
+    let allHeart = [];
+
+    // ======================
+    // 超慢速度：80 → 还要更慢就改 100、120
+    // ======================
+    for (let p of hp) {
+        let t = texts[Math.floor(Math.random()*texts.length)];
+        let c = colors[Math.floor(Math.random()*colors.length)];
+        let el = make(p.x, p.y, t, c);
+        allHeart.push(el);
+        await new Promise(r=>setTimeout(r,50));  // 👈 更慢了
+    }
+
+    await new Promise(r=>setTimeout(r,3000));
+
+    let first = true;
+
+    for(let i=0; i<700; i++){
+        let t = texts[Math.floor(Math.random()*texts.length)];
+        let c = colors[Math.floor(Math.random()*colors.length)];
+        let rx = Math.random()*(window.innerWidth-90);
+        let ry = Math.random()*(window.innerHeight-40);
+
+        make(rx, ry, t, c);
+
+        if (first) {
+            allHeart.forEach(e => e.style.display = "none");
+            first = false;
+        }
+
+        await new Promise(r=>setTimeout(r,3));
+    }
+}
+
+run();
+</script>
+</body>
+</html>
