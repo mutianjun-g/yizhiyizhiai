@@ -2,100 +2,248 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>爱心炸裂</title>
+    <title>💌 专属心动告白</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-            background: #ffffff;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "微软雅黑", sans-serif;
         }
-        .item {
-            position: absolute;
+
+        body {
+            background: #FFF0F5;
+            overflow: hidden;
+        }
+
+        .confession-window {
+            width: 650px;
+            height: 420px;
+            background: #FFF0F5;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(255, 133, 161, 0.3);
+            z-index: 999;
+        }
+
+        .title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #FF477E;
+            margin: 30px 0 10px;
+        }
+
+        .main-text {
+            font-size: 20px;
+            font-weight: bold;
+            color: #FF2E63;
+            margin: 10px 0 20px;
+            line-height: 1.6;
+        }
+
+        .tip {
+            font-size: 12px;
+            color: #FF85A1;
+        }
+
+        .coax {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FF2E63;
+            margin: 15px 0;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 80px;
+            margin-top: 40px;
+        }
+
+        .btn-yes {
+            padding: 15px 35px;
+            font-size: 18px;
+            font-weight: bold;
+            background: #FF85A1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-yes:hover {
+            background: #FF5C8A;
+        }
+
+        .btn-no {
+            padding: 15px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            background: #E6E6E6;
+            color: #333;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-no:hover {
+            background: #CCCCCC;
+        }
+
+        .float-text {
+            position: fixed;
             width: 90px;
             height: 40px;
+            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-family: "Microsoft YaHei";
-            font-size: 14px;
             font-weight: bold;
             border-radius: 6px;
+            font-size: 10px;
+            z-index: 10;
             user-select: none;
         }
     </style>
 </head>
+
 <body>
+    <div class="confession-window" id="confession">
+        <div class="title">叮咚~你的专属告白请查收💌</div>
+        <div class="main-text">我喜欢你，你愿意做我的女朋友吗💖</div>
+        <div class="tip">认真考虑一下哦~</div>
+        <div class="coax" id="coax"></div>
 
-<script>
-const texts = ["好好吃饭","好好爱自己","多喝热水","照顾好自己","我想你了","天天开心","保持好心情","多赚一点","别熬夜","注意保暖"];
-const colors = ["#FF6B6B","#FFD1DC","#D946EF","#6366F1","#4ADE80","#FACC15","#F97316","#8B5CF6","#EC4899","#10B981"];
+        <div class="btn-group">
+            <button class="btn-yes" id="yesBtn">我愿意💖</button>
+            <button class="btn-no" id="noBtn">不愿意</button>
+        </div>
+    </div>
 
-// 爱心坐标（已缩小：scale = 22）
-function heartPoints() {
-    let pts = [];
-    let cx = window.innerWidth / 2;
-    let cy = window.innerHeight / 2 - 140;
-    let scale = 22;
-    for (let t=0; t<360; t++) {
-        let th = 2 * Math.PI * t / 360;
-        let x = 16 * Math.sin(th)**3;
-        let y = 13*Math.cos(th) -5*Math.cos(2*th) -2*Math.cos(3*th) -Math.cos(4*th);
-        pts.push({x: cx + x*scale, y: cy - y*scale});
-    }
-    return pts;
-}
+    <script>
+        window.onbeforeunload = function () {
+            return "乖乖选一个才能走哦~";
+        };
 
-function make(x,y,text,color) {
-    let d = document.createElement("div");
-    d.className = "item";
-    d.style.left = x + "px";
-    d.style.top = y + "px";
-    d.style.background = color;
-    d.innerText = text;
-    document.body.appendChild(d);
-    return d;
-}
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+        const coax = document.getElementById('coax');
+        const confession = document.getElementById('confession');
 
-async function run() {
-    let hp = heartPoints();
-    let allHeart = [];
+        let yesSize = 18;
+        let noSize = 16;
+        const minNoSize = 8;
 
-    // ======================
-    // 超慢速度：80 → 还要更慢就改 100、120
-    // ======================
-    for (let p of hp) {
-        let t = texts[Math.floor(Math.random()*texts.length)];
-        let c = colors[Math.floor(Math.random()*colors.length)];
-        let el = make(p.x, p.y, t, c);
-        allHeart.push(el);
-        await new Promise(r=>setTimeout(r,50));  // 👈 更慢了
-    }
+        const coaxTexts = [
+            "真的不考虑一下吗？",
+            "呜呜不要嘛~",
+            "再看看我呀✨",
+            "不许拒绝我哼😤",
+            "再给一次机会好不好~"
+        ];
 
-    await new Promise(r=>setTimeout(r,3000));
+        noBtn.onclick = function () {
+            yesSize += 16;
+            if (noSize > minNoSize) noSize -= 4;
 
-    let first = true;
+            yesBtn.style.fontSize = yesSize + "px";
+            noBtn.style.fontSize = noSize + "px";
+            coax.innerText = coaxTexts[Math.floor(Math.random() * coaxTexts.length)];
+        };
 
-    for(let i=0; i<700; i++){
-        let t = texts[Math.floor(Math.random()*texts.length)];
-        let c = colors[Math.floor(Math.random()*colors.length)];
-        let rx = Math.random()*(window.innerWidth-90);
-        let ry = Math.random()*(window.innerHeight-40);
+        yesBtn.onclick = function () {
+            confession.style.display = "none";
+            startHeartAnimation();
+        };
 
-        make(rx, ry, t, c);
+        // ====================== 爱心动画（完全同步你最新版） ======================
+        function startHeartAnimation() {
+            const texts = ["好好吃饭", "好好爱自己", "少吃凉的", "照顾好自己", "我想你了", "天天开心",
+                "保持好心情", "多赚一点", "别熬夜", "你是小公主"];
 
-        if (first) {
-            allHeart.forEach(e => e.style.display = "none");
-            first = false;
+            const colors = ["#FF6B6B", "#FFD1DC", "#D946EF", "#6366F1", "#4ADE80", "#FACC15",
+                "#F97316", "#8B5CF6", "#EC4899", "#10B981"];
+
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+            const centerX = w / 2;
+            const centerY = h / 2;
+
+            function getHeartPoints() {
+                const points = [];
+                const total = 360;
+                for (let t = 0; t < total; t++) {
+                    const theta = 2 * Math.PI * t / total;
+                    let x = 16 * Math.sin(theta) ** 3;
+                    let y = 13 * Math.cos(theta) - 5 * Math.cos(2 * theta) - 2 * Math.cos(3 * theta) - Math.cos(4 * theta);
+                    const scale = 30;
+                    x = centerX + x * scale;
+                    y = (centerY - 140) - y * scale;
+                    points.push([x, y]);
+                }
+                return points;
+            }
+
+            const heartPoints = getHeartPoints();
+            const heartElements = [];
+
+            function drawHeartStep(i) {
+                if (i >= heartPoints.length) {
+                    setTimeout(explode, 1000); // 等待1秒爆炸（和你代码一致）
+                    return;
+                }
+                const [x, y] = heartPoints[i];
+                const text = texts[Math.floor(Math.random() * texts.length)];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+
+                const el = document.createElement('div');
+                el.className = "float-text";
+                el.style.left = x - 45 + "px";
+                el.style.top = y - 20 + "px";
+                el.style.background = color;
+                el.innerText = text;
+                document.body.appendChild(el);
+                heartElements.push(el);
+
+                setTimeout(() => drawHeartStep(i + 1), 50); // 0.05秒生成一个（同步）
+            }
+
+            drawHeartStep(0);
+
+            function explode() {
+                heartElements.forEach(el => el.style.display = "none");
+                let count = 0;
+                const max = 700;
+
+                function burst() {
+                    if (count >= max) return;
+                    count++;
+
+                    const tx = texts[Math.floor(Math.random() * texts.length)];
+                    const co = colors[Math.floor(Math.random() * colors.length)];
+                    const rx = Math.random() * (w - 90);
+                    const ry = Math.random() * (h - 40);
+
+                    const el = document.createElement('div');
+                    el.className = "float-text";
+                    el.style.left = rx + "px";
+                    el.style.top = ry + "px";
+                    el.style.background = co;
+                    el.innerText = tx;
+                    document.body.appendChild(el);
+
+                    setTimeout(burst, 3);
+                }
+                burst();
+            }
         }
-
-        await new Promise(r=>setTimeout(r,3));
-    }
-}
-
-run();
-</script>
+    </script>
 </body>
 </html>
