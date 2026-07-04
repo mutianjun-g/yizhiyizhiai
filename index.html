@@ -2,33 +2,47 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <!-- 苹果关键视口兼容，禁止缩放、适配刘海屏 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>💌 专属心动告白</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: "微软雅黑", sans-serif;
+            font-family: "微软雅黑", -apple-system, BlinkMacSystemFont, sans-serif;
+            /* 取消苹果点击灰色高亮 */
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             background: #FFF0F5;
             overflow: hidden;
+            /* 修复苹果滚动回弹、页面滑动穿透 */
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            -webkit-overflow-scrolling: none;
         }
 
         .confession-window {
-            width: 650px;
-            height: 420px;
+            width: min(650px, 90vw);
+            height: auto;
+            min-height: 420px;
             background: #FFF0F5;
             position: fixed;
             top: 50%;
             left: 50%;
+            /* 苹果transform模糊修复 */
             transform: translate(-50%, -50%);
+            -webkit-transform: translate(-50%, -50%);
             border-radius: 12px;
             padding: 20px;
             text-align: center;
             box-shadow: 0 0 30px rgba(255, 133, 161, 0.3);
             z-index: 999;
+            /* 开启硬件加速，Safari流畅 */
+            will-change: transform;
         }
 
         .title {
@@ -61,8 +75,9 @@
         .btn-group {
             display: flex;
             justify-content: center;
-            gap: 80px;
+            gap: min(80px, 10vw);
             margin-top: 40px;
+            flex-wrap: wrap;
         }
 
         .btn-yes {
@@ -75,6 +90,9 @@
             border-radius: 8px;
             cursor: pointer;
             transition: 0.2s;
+            /* 苹果按钮圆角渲染修复 */
+            -webkit-appearance: none;
+            appearance: none;
         }
 
         .btn-yes:hover {
@@ -91,6 +109,8 @@
             border-radius: 8px;
             cursor: pointer;
             transition: 0.2s;
+            -webkit-appearance: none;
+            appearance: none;
         }
 
         .btn-no:hover {
@@ -110,6 +130,8 @@
             font-size: 10px;
             z-index: 10;
             user-select: none;
+            -webkit-user-select: none;
+            will-change: left, top;
         }
     </style>
 </head>
@@ -128,9 +150,12 @@
     </div>
 
     <script>
-        window.onbeforeunload = function () {
-            return "乖乖选一个才能走哦~";
-        };
+        // 修复：苹果移动端禁用beforeunload（移动端无效且卡顿）
+        if (!/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+            window.onbeforeunload = function () {
+                return "乖乖选一个才能走哦~";
+            };
+        }
 
         const yesBtn = document.getElementById('yesBtn');
         const noBtn = document.getElementById('noBtn');
@@ -163,7 +188,7 @@
             startHeartAnimation();
         };
 
-        // ====================== 爱心动画（完全同步你最新版） ======================
+        // ====================== 苹果Safari兼容爱心动画 ======================
         function startHeartAnimation() {
             const texts = ["好好吃饭", "好好爱自己", "少吃凉的", "照顾好自己", "我想你了", "天天开心",
                 "保持好心情", "多赚一点", "别熬夜", "你是小公主"];
@@ -181,7 +206,9 @@
                 const total = 360;
                 for (let t = 0; t < total; t++) {
                     const theta = 2 * Math.PI * t / total;
-                    let x = 16 * Math.sin(theta) ** 3;
+                    // 修复苹果低版本Safari不支持 ** 立方运算符，改用 Math.pow
+                    const sinT = Math.sin(theta);
+                    let x = 16 * Math.pow(sinT, 3);
                     let y = 13 * Math.cos(theta) - 5 * Math.cos(2 * theta) - 2 * Math.cos(3 * theta) - Math.cos(4 * theta);
                     const scale = 30;
                     x = centerX + x * scale;
@@ -196,7 +223,7 @@
 
             function drawHeartStep(i) {
                 if (i >= heartPoints.length) {
-                    setTimeout(explode, 1000); // 等待1秒爆炸（和你代码一致）
+                    setTimeout(explode, 1000);
                     return;
                 }
                 const [x, y] = heartPoints[i];
@@ -212,7 +239,7 @@
                 document.body.appendChild(el);
                 heartElements.push(el);
 
-                setTimeout(() => drawHeartStep(i + 1), 50); // 0.05秒生成一个（同步）
+                setTimeout(() => drawHeartStep(i + 1), 50);
             }
 
             drawHeartStep(0);
