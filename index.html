@@ -2,8 +2,8 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <!-- 苹果关键视口兼容，禁止缩放、适配刘海屏 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <!-- 苹果专用viewport，适配刘海/灵动岛，禁止缩放 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, minimal-ui">
     <title>💌 专属心动告白</title>
     <style>
         * {
@@ -11,49 +11,54 @@
             padding: 0;
             box-sizing: border-box;
             font-family: "微软雅黑", -apple-system, BlinkMacSystemFont, sans-serif;
-            /* 取消苹果点击灰色高亮 */
-            -webkit-tap-highlight-color: transparent;
+            -webkit-tap-highlight-color: transparent; /* 移除苹果点击灰色块 */
+        }
+
+        html {
+            /* 适配苹果文字大小调整 */
+            -webkit-text-size-adjust: 100%;
         }
 
         body {
             background: #FFF0F5;
             overflow: hidden;
-            /* 修复苹果滚动回弹、页面滑动穿透 */
             position: fixed;
             width: 100vw;
             height: 100vh;
             -webkit-overflow-scrolling: none;
+            /* 刘海屏安全边距 */
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         }
 
         .confession-window {
-            width: min(650px, 90vw);
-            height: auto;
-            min-height: 420px;
+            width: min(650px, 92vw);
+            max-height: 88vh;
             background: #FFF0F5;
             position: fixed;
             top: 50%;
             left: 50%;
-            /* 苹果transform模糊修复 */
             transform: translate(-50%, -50%);
             -webkit-transform: translate(-50%, -50%);
             border-radius: 12px;
-            padding: 20px;
+            padding: clamp(14px, 4vw, 26px);
             text-align: center;
             box-shadow: 0 0 30px rgba(255, 133, 161, 0.3);
             z-index: 999;
-            /* 开启硬件加速，Safari流畅 */
             will-change: transform;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
+        /* 流体自适应字体，小屏自动缩小 */
         .title {
-            font-size: 16px;
+            font-size: clamp(13px, 3vw, 16px);
             font-weight: bold;
             color: #FF477E;
-            margin: 30px 0 10px;
+            margin: clamp(16px, 5vh, 30px) 0 10px;
         }
 
         .main-text {
-            font-size: 20px;
+            font-size: clamp(16px, 4.5vw, 22px);
             font-weight: bold;
             color: #FF2E63;
             margin: 10px 0 20px;
@@ -61,12 +66,12 @@
         }
 
         .tip {
-            font-size: 12px;
+            font-size: clamp(10px, 2vw, 12px);
             color: #FF85A1;
         }
 
         .coax {
-            font-size: 14px;
+            font-size: clamp(12px, 3vw, 14px);
             font-weight: bold;
             color: #FF2E63;
             margin: 15px 0;
@@ -75,14 +80,14 @@
         .btn-group {
             display: flex;
             justify-content: center;
-            gap: min(80px, 10vw);
-            margin-top: 40px;
+            gap: clamp(20px, 8vw, 80px);
+            margin-top: clamp(24px, 6vh, 40px);
             flex-wrap: wrap;
         }
 
         .btn-yes {
-            padding: 15px 35px;
-            font-size: 18px;
+            padding: clamp(12px, 3vw, 15px) clamp(24px, 6vw, 35px);
+            font-size: clamp(15px, 3.2vw, 18px);
             font-weight: bold;
             background: #FF85A1;
             color: white;
@@ -90,9 +95,9 @@
             border-radius: 8px;
             cursor: pointer;
             transition: 0.2s;
-            /* 苹果按钮圆角渲染修复 */
             -webkit-appearance: none;
             appearance: none;
+            min-width: 110px;
         }
 
         .btn-yes:hover {
@@ -100,8 +105,8 @@
         }
 
         .btn-no {
-            padding: 15px 25px;
-            font-size: 16px;
+            padding: clamp(12px, 3vw, 15px) clamp(18px, 5vw, 25px);
+            font-size: clamp(13px, 2.8vw, 16px);
             font-weight: bold;
             background: #E6E6E6;
             color: #333;
@@ -111,6 +116,7 @@
             transition: 0.2s;
             -webkit-appearance: none;
             appearance: none;
+            min-width: 90px;
         }
 
         .btn-no:hover {
@@ -119,19 +125,42 @@
 
         .float-text {
             position: fixed;
-            width: 90px;
-            height: 40px;
+            width: clamp(70px, 18vw, 90px);
+            height: clamp(32px, 9vh, 40px);
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
             border-radius: 6px;
-            font-size: 10px;
+            font-size: clamp(8px, 2vw, 10px);
             z-index: 10;
             user-select: none;
             -webkit-user-select: none;
             will-change: left, top;
+        }
+
+        /* 超窄苹果小屏：iPhone SE 320px宽度 */
+        @media screen and (max-width: 340px) {
+            .confession-window {
+                padding: 12px;
+                border-radius: 10px;
+            }
+            .btn-group {
+                flex-direction: column;
+                align-items: center;
+                gap: 14px;
+            }
+            .btn-yes, .btn-no {
+                width: 75%;
+            }
+        }
+
+        /* 375px常规小屏：iPhone 12mini/13mini */
+        @media screen and (min-width:341px) and (max-width: 400px) {
+            .btn-group {
+                gap: 25px;
+            }
         }
     </style>
 </head>
@@ -150,7 +179,7 @@
     </div>
 
     <script>
-        // 修复：苹果移动端禁用beforeunload（移动端无效且卡顿）
+        // 苹果移动端关闭刷新弹窗，防止Safari卡死
         if (!/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
             window.onbeforeunload = function () {
                 return "乖乖选一个才能走哦~";
@@ -177,7 +206,6 @@
         noBtn.onclick = function () {
             yesSize += 16;
             if (noSize > minNoSize) noSize -= 4;
-
             yesBtn.style.fontSize = yesSize + "px";
             noBtn.style.fontSize = noSize + "px";
             coax.innerText = coaxTexts[Math.floor(Math.random() * coaxTexts.length)];
@@ -188,11 +216,10 @@
             startHeartAnimation();
         };
 
-        // ====================== 苹果Safari兼容爱心动画 ======================
+        // Safari兼容爱心动画（替换**幂运算，小屏坐标自适应）
         function startHeartAnimation() {
             const texts = ["好好吃饭", "好好爱自己", "少吃凉的", "照顾好自己", "我想你了", "天天开心",
                 "保持好心情", "多赚一点", "别熬夜", "你是小公主"];
-
             const colors = ["#FF6B6B", "#FFD1DC", "#D946EF", "#6366F1", "#4ADE80", "#FACC15",
                 "#F97316", "#8B5CF6", "#EC4899", "#10B981"];
 
@@ -204,15 +231,15 @@
             function getHeartPoints() {
                 const points = [];
                 const total = 360;
+                // 根据屏幕宽度动态缩放爱心大小，小屏爱心缩小
+                const heartScale = w < 400 ? 20 : 30;
                 for (let t = 0; t < total; t++) {
                     const theta = 2 * Math.PI * t / total;
-                    // 修复苹果低版本Safari不支持 ** 立方运算符，改用 Math.pow
                     const sinT = Math.sin(theta);
                     let x = 16 * Math.pow(sinT, 3);
                     let y = 13 * Math.cos(theta) - 5 * Math.cos(2 * theta) - 2 * Math.cos(3 * theta) - Math.cos(4 * theta);
-                    const scale = 30;
-                    x = centerX + x * scale;
-                    y = (centerY - 140) - y * scale;
+                    x = centerX + x * heartScale;
+                    y = (centerY - h * 0.18) - y * heartScale;
                     points.push([x, y]);
                 }
                 return points;
@@ -232,8 +259,8 @@
 
                 const el = document.createElement('div');
                 el.className = "float-text";
-                el.style.left = x - 45 + "px";
-                el.style.top = y - 20 + "px";
+                el.style.left = x - parseFloat(getComputedStyle(el).width) / 2 + "px";
+                el.style.top = y - parseFloat(getComputedStyle(el).height) / 2 + "px";
                 el.style.background = color;
                 el.innerText = text;
                 document.body.appendChild(el);
@@ -247,12 +274,11 @@
             function explode() {
                 heartElements.forEach(el => el.style.display = "none");
                 let count = 0;
-                const max = 700;
+                const max = w < 400 ? 450 : 700; // 小屏减少漂浮文字数量，避免卡顿
 
                 function burst() {
                     if (count >= max) return;
                     count++;
-
                     const tx = texts[Math.floor(Math.random() * texts.length)];
                     const co = colors[Math.floor(Math.random() * colors.length)];
                     const rx = Math.random() * (w - 90);
@@ -265,8 +291,7 @@
                     el.style.background = co;
                     el.innerText = tx;
                     document.body.appendChild(el);
-
-                    setTimeout(burst, 3);
+                    setTimeout(burst, w < 400 ? 6 : 3); // 小屏放慢生成速度，防卡顿
                 }
                 burst();
             }
