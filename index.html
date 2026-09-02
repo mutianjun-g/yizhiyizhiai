@@ -2,7 +2,6 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <!-- 苹果强制适配刘海、禁止缩放 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, minimal-ui">
     <title>💌 专属心动告白</title>
     <style>
@@ -25,7 +24,6 @@
             height: 100vh;
             top: 0;
             left: 0;
-            /* 刘海安全边距 */
             padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         }
         .confession-window {
@@ -126,7 +124,6 @@
             -webkit-user-select: none;
             will-change: left, top;
         }
-        /* iPhone SE / mini 超小屏幕强制垂直按钮 */
         @media screen and (max-width: 360px) {
             .confession-window {
                 max-height: 78vh;
@@ -154,7 +151,6 @@
         </div>
     </div>
     <script>
-        // 苹果移动端移除卸载弹窗，避免卡死
         if (!/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
             window.onbeforeunload = function () {
                 return "乖乖选一个才能走哦~";
@@ -193,12 +189,14 @@
             const w = window.innerWidth;
             const h = window.innerHeight;
             const centerX = w / 2;
-            const centerY = h / 2;
+            // =========向下偏移，修复顶部超出屏幕=========
+            const centerY = h / 2 + 80;
+
             function getHeartPoints() {
                 const points = [];
                 const total = 360;
                 const heartScale = w < 420 ? 18 : 28;
-                const verticalOffset = h * 0.12;
+                const verticalOffset = h * 0.02;
                 for (let t = 0; t < total; t++) {
                     const theta = 2 * Math.PI * t / total;
                     const sinT = Math.sin(theta);
@@ -207,7 +205,7 @@
                     x = centerX + x * heartScale;
                     y = (centerY - verticalOffset) - y * heartScale;
                     x = Math.max(30, Math.min(w - 90, x));
-                    y = Math.max(20, Math.min(h - 45, y));
+                    y = Math.max(60, Math.min(h - 45, y));
                     points.push([x, y]);
                 }
                 return points;
@@ -242,7 +240,6 @@
                 const intervalTime = w < 420 ? 8 : 4;
 
                 let idx = 0;
-                // ✅ 修复：不要递归setTimeout并发，改用setInterval串行生成粒子
                 const timer = setInterval(()=>{
                     if(idx >= maxNum){
                         clearInterval(timer);
@@ -251,7 +248,8 @@
                     const tx = texts[Math.floor(Math.random() * texts.length)];
                     const co = colors[Math.floor(Math.random() * colors.length)];
                     const rx = Math.random() * (w - itemW - 10);
-                    const ry = Math.random() * (h - 40);
+                    // 粒子最小top=50，避免跑到屏幕最顶端
+                    const ry = Math.max(50, Math.random() * (h - 40));
                     const el = document.createElement('div');
                     el.className = "float-text";
                     el.style.left = rx + "px";
