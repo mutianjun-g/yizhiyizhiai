@@ -236,18 +236,21 @@
                 setTimeout(() => drawHeartStep(i + 1), 50);
             }
             drawHeartStep(0);
+
             function explode() {
                 heartElements.forEach(el => el.style.display = "none");
                 let count = 0;
                 // 小屏减少粒子数量防卡顿+溢出
                 const maxNum = w < 420 ? 400 : 650;
+                // 复刻css clamp(65px,16vw,85px)，不再读取display:none的DOM，修复NaN坐标bug
+                const vwVal = w * 0.16;
+                const itemW = Math.max(65, Math.min(85, vwVal));
+
                 function burst() {
                     if (count >= maxNum) return;
                     count++;
                     const tx = texts[Math.floor(Math.random() * texts.length)];
                     const co = colors[Math.floor(Math.random() * colors.length)];
-                    // 严格限制漂浮文字左右边界，不会超出屏幕
-                    const itemW = parseFloat(getComputedStyle(document.querySelector('.float-text')).width);
                     const rx = Math.random() * (w - itemW - 10);
                     const ry = Math.random() * (h - 40);
                     const el = document.createElement('div');
