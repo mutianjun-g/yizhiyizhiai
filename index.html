@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>💌 专属心动告白</title>
     <style>
         * {
@@ -13,103 +12,102 @@
             font-family: -apple-system, BlinkMacSystemFont, "Microsoft YaHei", sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
-        html {
+        html, body {
             height: 100%;
-        }
-        body {
             background: #FFF0F5;
             overflow: hidden;
+        }
+        body {
             position: fixed;
             width: 100vw;
-            height: 100vh;
             top: 0;
             left: 0;
-            /*适配刘海屏安全边距*/
-            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         }
         .confession-window {
-            width: min(620px, 92vw);
+            width: min(600px, 90vw);
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             background: #FFF0F5;
             border-radius: 14px;
-            padding: 24px 16px;
+            padding: 28px 20px;
             text-align: center;
             box-shadow: 0 0 24px rgba(255,133,161,0.25);
             z-index: 999;
         }
         .title {
-            font-size: clamp(14px, 2.8vw, 17px);
+            font-size: clamp(14px, 3vw, 17px);
             font-weight: bold;
             color: #FF477E;
-            margin-bottom:10px;
+            margin-bottom: 12px;
         }
         .main-text {
-            font-size: clamp(16px,4vw,22px);
+            font-size: clamp(16px, 4.5vw, 22px);
             font-weight: bold;
             color: #FF2E63;
-            margin:12px 0;
+            margin: 14px 0;
+            line-height: 1.5;
         }
         .tip {
-            font-size: clamp(11px,2vw,13px);
-            color:#FF85A1;
+            font-size: clamp(11px, 2.2vw, 13px);
+            color: #FF85A1;
         }
         .coax {
-            font-size: clamp(13px,2.6vw,15px);
-            font-weight:bold;
-            color:#FF2E63;
-            margin:16px 0;
+            font-size: clamp(13px, 2.8vw, 15px);
+            font-weight: bold;
+            color: #FF2E63;
+            margin: 18px 0;
+            min-height: 20px;
         }
         .btn-group {
-            display:flex;
-            justify-content:center;
-            gap:clamp(20px,6vw,50px);
-            flex-wrap:wrap;
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
         }
         .btn-yes {
-            padding:12px 32px;
-            font-size: clamp(15px,3vw,18px);
-            font-weight:bold;
-            background:#FF85A1;
-            color:white;
-            border:none;
-            border-radius:8px;
-            cursor:pointer;
+            padding: 12px 34px;
+            font-size: clamp(15px, 3.2vw, 18px);
+            font-weight: bold;
+            background: #FF85A1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
         }
         .btn-no {
-            padding:12px 24px;
-            font-size: clamp(13px,2.6vw,16px);
-            font-weight:bold;
-            background:#E6E6E6;
-            color:#333;
-            border:none;
-            border-radius:8px;
-            cursor:pointer;
+            padding: 12px 26px;
+            font-size: clamp(13px, 2.8vw, 16px);
+            font-weight: bold;
+            background: #E6E6E6;
+            color: #333;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
         }
         .float-text {
             position: fixed;
-            width: clamp(62px,15vw,82px);
-            height: clamp(28px,6vh,34px);
-            color:white;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            font-weight:bold;
-            border-radius:6px;
-            font-size: clamp(7px,1.7vw,9px);
-            z-index:10;
-            user-select:none;
+            width: 70px;
+            height: 30px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border-radius: 6px;
+            font-size: 9px;
+            z-index: 10;
+            user-select: none;
         }
-        @media (max-width:480px) {
+        @media (max-width: 480px) {
             .btn-group {
-                flex-direction:column;
-                align-items:center;
-                gap:14px;
+                flex-direction: column;
+                align-items: center;
+                gap: 14px;
             }
-            .btn-yes,.btn-no {
-                width:80%;
+            .btn-yes, .btn-no {
+                width: 75%;
             }
         }
     </style>
@@ -134,7 +132,6 @@ const confessionBox = document.getElementById('confessionBox');
 
 let yesFontSize = 18;
 let noFontSize = 16;
-const minNoFont = 8;
 const coaxList = [
     "真的不考虑一下吗？",
     "呜呜不要嘛~",
@@ -143,123 +140,107 @@ const coaxList = [
     "再给一次机会好不好~"
 ];
 
-btnNo.onclick = ()=>{
+btnNo.onclick = () => {
     yesFontSize += 14;
-    if(noFontSize>minNoFont) noFontSize -=3;
-    btnYes.style.fontSize = yesFontSize +"px";
-    btnNo.style.fontSize = noFontSize +"px";
-    coaxText.innerText = coaxList[Math.floor(Math.random()*coaxList.length)];
+    if (noFontSize > 8) noFontSize -= 3;
+    btnYes.style.fontSize = yesFontSize + "px";
+    btnNo.style.fontSize = noFontSize + "px";
+    coaxText.innerText = coaxList[Math.floor(Math.random() * coaxList.length)];
 };
 
-btnYes.onclick = ()=>{
+btnYes.onclick = () => {
     confessionBox.style.display = "none";
-    startHeartDraw();
+    startHeart();
 };
 
-// 获取真实可视区域，兼容刘海屏
-function getViewport(){
-    return {
-        w: document.documentElement.clientWidth,
-        h: document.documentElement.clientHeight
-    }
-}
+/* ============================================================
+   重写爱心轨迹：先算包围盒 → 按屏幕比例缩放 → 居中绘制
+   不做任何坐标钳位，爱心形状不会变形
+   ============================================================ */
+function startHeart() {
+    const wordList = ["好好吃饭","好好爱自己","少吃凉的","照顾好自己","我想你了",
+                      "天天开心","保持好心情","多赚一点","别熬夜","你是小公主"];
+    const colorList = ["#FF6B6B","#FFD1DC","#D946EF","#6366F1","#4ADE80",
+                       "#FACC15","#F97316","#8B5CF6","#EC4899","#10B981"];
 
-function startHeartDraw(){
-    const wordList = ["好好吃饭","好好爱自己","少吃凉的","照顾好自己","我想你了","天天开心","保持好心情","多赚一点","别熬夜","你是小公主"];
-    const colorList = ["#FF6B6B","#FFD1DC","#D946EF","#6366F1","#4ADE80","#FACC15","#F97316","#8B5CF6","#EC4899","#10B981"];
-    const view = getViewport();
-    const w = view.w;
-    const h = view.h;
+    const w = document.documentElement.clientWidth;
+    const h = document.documentElement.clientHeight;
 
-    // 自适应缩放：手机屏幕小就缩小爱心，PC大屏放大，保证爱心完整不越界
-    let scale;
-    if(w <= 480){
-        scale = 9;
-    }else if(w <=768){
-        scale =13;
-    }else{
-        scale =21;
+    // ---- 第一步：生成标准爱心坐标（未缩放）----
+    // 爱心方程：x = 16sin³θ, y = 13cosθ - 5cos2θ - 2cos3θ - cos4θ
+    // 理论包围盒：x∈[-16,16] 宽32，y∈[-17,13] 高30
+    const RAW_POINTS = [];
+    const TOTAL = 300;
+    for (let i = 0; i < TOTAL; i++) {
+        const theta = 2 * Math.PI * i / TOTAL;
+        const s = Math.sin(theta);
+        const x = 16 * s * s * s;
+        const y = 13 * Math.cos(theta)
+                - 5 * Math.cos(2 * theta)
+                - 2 * Math.cos(3 * theta)
+                - Math.cos(4 * theta);
+        RAW_POINTS.push([x, y]);
     }
-    // 爱心中心点，整体向下偏移，避免贴顶部
+
+    // ---- 第二步：按屏幕尺寸计算缩放比例，确保完整显示 ----
+    // 左右各留 12% 边距，上下各留 12% 边距
+    const availW = w * 0.76;   // 可用宽度
+    const availH = h * 0.72;   // 可用高度
+    // 爱心原始宽32 高30，取较小缩放比，保证完整不溢出
+    const scale = Math.min(availW / 32, availH / 30);
+
+    // ---- 第三步：中心点（屏幕正中偏下一点）----
     const cx = w / 2;
-    const cy = h / 2 + 70;
+    const cy = h / 2 + h * 0.06;
 
-    // 爱心参数方程生成点位，强制边界约束，不会跑出屏幕
-    function genHeartPoints(){
-        const points = [];
-        const totalPoint = 320;
-        //预留边距，左右上下都留出空白，防止裁切
-        const marginX = w*0.12;
-        const marginY = h*0.14;
-        for(let i=0;i<totalPoint;i++){
-            const theta = 2*Math.PI*i/totalPoint;
-            const sinT = Math.sin(theta);
-            let px = 16 * Math.pow(sinT,3);
-            let py = 13*Math.cos(theta) -5*Math.cos(2*theta) -2*Math.cos(3*theta) - Math.cos(4*theta);
-            px = cx + px*scale;
-            py = cy - py*scale;
-            //边界钳位，点位绝对不会跑到屏幕外面
-            px = Math.max(marginX, Math.min(w - marginX - 80, px));
-            py = Math.max(marginY, Math.min(h - marginY, py));
-            points.push([px,py]);
-        }
-        return points;
-    }
+    // ---- 第四步：缩放+平移到屏幕坐标 ----
+    const points = RAW_POINTS.map(([x, y]) => [
+        cx + x * scale,
+        cy - y * scale   // y轴翻转（数学坐标→屏幕坐标）
+    ]);
 
-    const pointArr = genHeartPoints();
-    const heartDomList = [];
-    let prevDom = null;
+    // ---- 第五步：逐点绘制 ----
+    const heartDoms = [];
+    let idx = 0;
 
-    //逐点绘制爱心
-    function drawStep(index){
-        if(index >= pointArr.length){
-            setTimeout(explodeParticle,1000);
+    function drawNext() {
+        if (idx >= points.length) {
+            setTimeout(explode, 1000);
             return;
         }
-        const [x,y] = pointArr[index];
-        const text = wordList[Math.floor(Math.random()*wordList.length)];
-        const color = colorList[Math.floor(Math.random()*colorList.length)];
+        const [x, y] = points[idx];
         const div = document.createElement('div');
         div.className = "float-text";
-        div.style.left = x + "px";
-        div.style.top = y + "px";
-        div.style.background = color;
-        div.innerText = text;
+        div.style.left = (x - 35) + "px";   // 方块宽70，左移一半居中
+        div.style.top = (y - 15) + "px";    // 方块高30，上移一半居中
+        div.style.background = colorList[Math.floor(Math.random() * colorList.length)];
+        div.innerText = wordList[Math.floor(Math.random() * wordList.length)];
         document.body.appendChild(div);
-        heartDomList.push(div);
-
-        // 解决堆叠盖层：上一个元素降低层级，新元素在上
-        if(prevDom) prevDom.style.zIndex = 5;
-        div.style.zIndex = 10;
-        prevDom = div;
-
-        setTimeout(()=>drawStep(index+1),42);
+        heartDoms.push(div);
+        idx++;
+        setTimeout(drawNext, 40);
     }
-    drawStep(0);
+    drawNext();
 
-    //爆炸粒子动画
-    function explodeParticle(){
-        heartDomList.forEach(dom=>dom.style.display="none");
-        const maxCount = w<480 ?260 :480;
-        let count =0;
-        const timer = setInterval(()=>{
-            if(count >= maxCount){
+    // ---- 爆炸粒子 ----
+    function explode() {
+        heartDoms.forEach(d => d.style.display = "none");
+        const maxCount = w < 480 ? 250 : 450;
+        let count = 0;
+        const timer = setInterval(() => {
+            if (count >= maxCount) {
                 clearInterval(timer);
                 return;
             }
-            const t = wordList[Math.floor(Math.random()*wordList.length)];
-            const c = colorList[Math.floor(Math.random()*colorList.length)];
-            const rx = Math.max(10, Math.random()*(w -90));
-            const ry = Math.max(60, Math.random()*(h-100));
             const div = document.createElement('div');
             div.className = "float-text";
-            div.style.left = rx +"px";
-            div.style.top = ry +"px";
-            div.style.background = c;
-            div.innerText = t;
+            div.style.left = Math.random() * (w - 80) + "px";
+            div.style.top = (40 + Math.random() * (h - 90)) + "px";
+            div.style.background = colorList[Math.floor(Math.random() * colorList.length)];
+            div.innerText = wordList[Math.floor(Math.random() * wordList.length)];
             document.body.appendChild(div);
             count++;
-        }, w<480?10:5);
+        }, w < 480 ? 10 : 5);
     }
 }
 </script>
