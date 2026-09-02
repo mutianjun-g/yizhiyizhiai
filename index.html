@@ -123,6 +123,7 @@
         <button class="btn-no" id="btnNo">不愿意</button>
     </div>
 </div>
+
 <script>
 const btnYes = document.getElementById('btnYes');
 const btnNo = document.getElementById('btnNo');
@@ -140,7 +141,7 @@ const coaxList = [
     "再给一次机会好不好~"
 ];
 
-btnNo.onclick = () => {
+btnNo.onclick = function () {
     yesFontSize += 14;
     if (noFontSize > 8) noFontSize -= 3;
     btnYes.style.fontSize = yesFontSize + "px";
@@ -148,7 +149,7 @@ btnNo.onclick = () => {
     coaxText.innerText = coaxList[Math.floor(Math.random() * coaxList.length)];
 };
 
-btnYes.onclick = () => {
+btnYes.onclick = function () {
     confessionBox.style.display = "none";
     startHeart();
 };
@@ -162,13 +163,12 @@ function startHeart() {
     const w = document.documentElement.clientWidth;
     const h = document.documentElement.clientHeight;
 
-    // 生成标准爱心坐标
     const RAW_POINTS = [];
     const TOTAL = 300;
     for (let i = 0; i < TOTAL; i++) {
         const theta = 2 * Math.PI * i / TOTAL;
-        const  = Math.sin(theta);
-        const x = 16 *  *  * ;
+        const sinVal = Math.sin(theta);
+        const x = 16 * sinVal * sinVal * sinVal;
         const y = 13 * Math.cos(theta)
                 - 5 * Math.cos(2 * theta)
                 - 2 * Math.cos(3 * theta)
@@ -176,22 +176,17 @@ function startHeart() {
         RAW_POINTS.push([x, y]);
     }
 
-    // 按屏幕尺寸计算缩放比例
     const availW = w * 0.76;
     const availH = h * 0.72;
     const scale = Math.min(availW / 32, availH / 30);
 
-    // 中心点
     const cx = w / 2;
     const cy = h / 2 + h * 0.06;
 
-    // 缩放+平移
-    const points = RAW_POINTS.map(([x, y]) => [
-        cx + x * scale,
-        cy - y * scale
-    ]);
+    const points = RAW_POINTS.map(function (p) {
+        return [cx + p[0] * scale, cy - p[1] * scale];
+    });
 
-    // 逐点绘制
     const heartDoms = [];
     let idx = 0;
 
@@ -200,7 +195,8 @@ function startHeart() {
             setTimeout(explode, 1000);
             return;
         }
-        const [x, y] = points[idx];
+        const x = points[idx][0];
+        const y = points[idx][1];
         const div = document.createElement('div');
         div.className = "float-text";
         div.style.left = (x - 35) + "px";
@@ -214,12 +210,13 @@ function startHeart() {
     }
     drawNext();
 
-    // 爆炸粒子
     function explode() {
-        heartDoms.forEach(d => d.style.display = "none");
+        for (let i = 0; i < heartDoms.length; i++) {
+            heartDoms[i].style.display = "none";
+        }
         const maxCount = w < 480 ? 250 : 450;
         let count = 0;
-        const timer = setInterval(() => {
+        const timer = setInterval(function () {
             if (count >= maxCount) {
                 clearInterval(timer);
                 return;
@@ -238,3 +235,4 @@ function startHeart() {
 </script>
 </body>
 </html>
+ 
