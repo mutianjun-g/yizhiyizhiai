@@ -123,7 +123,6 @@
         <button class="btn-no" id="btnNo">不愿意</button>
     </div>
 </div>
-
 <script>
 const btnYes = document.getElementById('btnYes');
 const btnNo = document.getElementById('btnNo');
@@ -132,6 +131,7 @@ const confessionBox = document.getElementById('confessionBox');
 
 let yesFontSize = 18;
 let noFontSize = 16;
+
 const coaxList = [
     "真的不考虑一下吗？",
     "呜呜不要嘛~",
@@ -153,22 +153,16 @@ btnYes.onclick = () => {
     startHeart();
 };
 
-/* ============================================================
-   重写爱心轨迹：先算包围盒 → 按屏幕比例缩放 → 居中绘制
-   不做任何坐标钳位，爱心形状不会变形
-   ============================================================ */
 function startHeart() {
     const wordList = ["傻子","神人","魔怔哥","让你退了吗?","让你幸福了吗?",
-                      "我C尼玛","保持尼玛","我直接拿筷子加水泥","操你妈的","你是大傻逼"];
+                      "我C尼玛","保持尼玛","我直接拿筷子加水泥","*********的","你是大傻逼"];
     const colorList = ["#FF6B6B","#FFD1DC","#D946EF","#6366F1","#4ADE80",
                        "#FACC15","#F97316","#8B5CF6","#EC4899","#10B981"];
 
     const w = document.documentElement.clientWidth;
     const h = document.documentElement.clientHeight;
 
-    // ---- 第一步：生成标准爱心坐标（未缩放）----
-    // 爱心方程：x = 16sin³θ, y = 13cosθ - 5cos2θ - 2cos3θ - cos4θ
-    // 理论包围盒：x∈[-16,16] 宽32，y∈[-17,13] 高30
+    // 生成标准爱心坐标
     const RAW_POINTS = [];
     const TOTAL = 300;
     for (let i = 0; i < TOTAL; i++) {
@@ -182,24 +176,22 @@ function startHeart() {
         RAW_POINTS.push([x, y]);
     }
 
-    // ---- 第二步：按屏幕尺寸计算缩放比例，确保完整显示 ----
-    // 左右各留 12% 边距，上下各留 12% 边距
-    const availW = w * 0.76;   // 可用宽度
-    const availH = h * 0.72;   // 可用高度
-    // 爱心原始宽32 高30，取较小缩放比，保证完整不溢出
+    // 按屏幕尺寸计算缩放比例
+    const availW = w * 0.76;
+    const availH = h * 0.72;
     const scale = Math.min(availW / 32, availH / 30);
 
-    // ---- 第三步：中心点（屏幕正中偏下一点）----
+    // 中心点
     const cx = w / 2;
     const cy = h / 2 + h * 0.06;
 
-    // ---- 第四步：缩放+平移到屏幕坐标 ----
+    // 缩放+平移
     const points = RAW_POINTS.map(([x, y]) => [
         cx + x * scale,
-        cy - y * scale   // y轴翻转（数学坐标→屏幕坐标）
+        cy - y * scale
     ]);
 
-    // ---- 第五步：逐点绘制 ----
+    // 逐点绘制
     const heartDoms = [];
     let idx = 0;
 
@@ -211,8 +203,8 @@ function startHeart() {
         const [x, y] = points[idx];
         const div = document.createElement('div');
         div.className = "float-text";
-        div.style.left = (x - 35) + "px";   // 方块宽70，左移一半居中
-        div.style.top = (y - 15) + "px";    // 方块高30，上移一半居中
+        div.style.left = (x - 35) + "px";
+        div.style.top = (y - 15) + "px";
         div.style.background = colorList[Math.floor(Math.random() * colorList.length)];
         div.innerText = wordList[Math.floor(Math.random() * wordList.length)];
         document.body.appendChild(div);
@@ -222,7 +214,7 @@ function startHeart() {
     }
     drawNext();
 
-    // ---- 爆炸粒子 ----
+    // 爆炸粒子
     function explode() {
         heartDoms.forEach(d => d.style.display = "none");
         const maxCount = w < 480 ? 250 : 450;
