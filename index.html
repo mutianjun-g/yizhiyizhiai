@@ -197,9 +197,7 @@
             function getHeartPoints() {
                 const points = [];
                 const total = 360;
-                // 小屏缩小爱心尺寸，防止超出左右边界
                 const heartScale = w < 420 ? 18 : 28;
-                // 纵向偏移自适应屏幕高度，不会顶出上下屏幕
                 const verticalOffset = h * 0.12;
                 for (let t = 0; t < total; t++) {
                     const theta = 2 * Math.PI * t / total;
@@ -208,7 +206,6 @@
                     let y = 13 * Math.cos(theta) - 5 * Math.cos(2 * theta) - 2 * Math.cos(3 * theta) - Math.cos(4 * theta);
                     x = centerX + x * heartScale;
                     y = (centerY - verticalOffset) - y * heartScale;
-                    // 限制坐标在可视窗口内，杜绝溢出
                     x = Math.max(30, Math.min(w - 90, x));
                     y = Math.max(20, Math.min(h - 45, y));
                     points.push([x, y]);
@@ -239,16 +236,18 @@
 
             function explode() {
                 heartElements.forEach(el => el.style.display = "none");
-                let count = 0;
-                // 小屏减少粒子数量防卡顿+溢出
                 const maxNum = w < 420 ? 400 : 650;
-                // 复刻css clamp(65px,16vw,85px)，不再读取display:none的DOM，修复NaN坐标bug
                 const vwVal = w * 0.16;
                 const itemW = Math.max(65, Math.min(85, vwVal));
+                const intervalTime = w < 420 ? 8 : 4;
 
-                function burst() {
-                    if (count >= maxNum) return;
-                    count++;
+                let idx = 0;
+                // ✅ 修复：不要递归setTimeout并发，改用setInterval串行生成粒子
+                const timer = setInterval(()=>{
+                    if(idx >= maxNum){
+                        clearInterval(timer);
+                        return;
+                    }
                     const tx = texts[Math.floor(Math.random() * texts.length)];
                     const co = colors[Math.floor(Math.random() * colors.length)];
                     const rx = Math.random() * (w - itemW - 10);
@@ -260,9 +259,8 @@
                     el.style.background = co;
                     el.innerText = tx;
                     document.body.appendChild(el);
-                    setTimeout(burst, w < 420 ? 8 : 4);
-                }
-                burst();
+                    idx++;
+                }, intervalTime);
             }
         }
     </script>
